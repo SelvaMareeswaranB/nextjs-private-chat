@@ -1,7 +1,10 @@
 "use client";
 import { useUsername } from "@/hooks/use-Username";
 import { client } from "@/lib/client";
-import { useMutation } from "@tanstack/react-query";
+import { Message } from "@/lib/realtime";
+import { useRealtime } from "@/lib/realtime-client";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { useParams } from "next/navigation";
 import React, { useRef, useState } from "react";
 
@@ -28,7 +31,7 @@ export default function RoomPage() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const { mutate: sendMessage,isPending } = useMutation({
+  const { mutate: sendMessage, isPending } = useMutation({
     mutationFn: async ({ text }: { text: string }) => {
       await client.messages.post(
         {
@@ -37,6 +40,25 @@ export default function RoomPage() {
         },
         { query: { roomId } }
       );
+      setInput("");
+    },
+  });
+
+  const { data: messages, refetch } = useQuery({
+    queryKey: ["messages", roomId],
+    queryFn: async () => {
+      const res = await client.messages.get({ query: { roomId } });
+      return res.data;
+    },
+  });
+
+  useRealtime({
+    channels: [roomId],
+    events: ["chat.message", "chat.destroy"],
+    onData: ({ event }) => {
+      if (event === "chat.message") {
+        refetch();
+      }
     },
   });
   return (
@@ -79,7 +101,38 @@ export default function RoomPage() {
         </button>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin"></div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
+        {messages?.messages.length === 0 && (
+          <div className="flex items-center justify-center h-full">
+            <p>No messages yet,start your conversation.</p>
+          </div>
+        )}
+
+        {messages?.messages.map((message: Message) => {
+          const isSender = message.sender === username;
+          return (
+            <div key={message.id} className="flex flex-col justify-start">
+              <div className="max-w-[80%] group">
+                <div className="flex items-baseline gap-3 mb-1">
+                  <span
+                    className={`text-xs font-bold  ${
+                      isSender ? "text-green-500" : "text-blue-500"
+                    }`}
+                  >
+                    {isSender ? "You" : message.sender}
+                  </span>
+                  <span className="text-[10px] text-zinc-600">
+                    {format(message.timeStamp, "hh:mm a")}
+                  </span>
+                </div>
+                <div className="text-sm text-zinc-300 leading-relaxed break-all">
+                  {message.text}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
       <div className="p-4 border-t border-zinc-800 bg-zinc-900/30">
         <div className="flex gap-4">
@@ -90,8 +143,7 @@ export default function RoomPage() {
             <input
               autoFocus
               type="text"
-              placeholder="Type Me
-              ssage..."
+              placeholder="Type Message..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
