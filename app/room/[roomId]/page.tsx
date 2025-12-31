@@ -3,7 +3,7 @@ import { useUsername } from "@/hooks/use-Username";
 import { client } from "@/lib/client";
 import { Message } from "@/lib/realtime";
 import { useRealtime } from "@/lib/realtime-client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { format } from "date-fns";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
