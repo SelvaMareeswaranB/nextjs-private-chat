@@ -123,7 +123,7 @@ const app = new Elysia({ prefix: "/api" })
     cors({
       origin: [
         "http://localhost:3000",
-        "https://nextjs-private-chat.vercel.app/",
+        "https://nextjs-private-chat.vercel.app",
       ],
       methods: ["GET", "POST", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"],
