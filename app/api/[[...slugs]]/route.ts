@@ -4,12 +4,7 @@ import { nanoid } from "nanoid";
 import { authMiddleware } from "./auth";
 import { z } from "zod";
 import { Message, realtime } from "@/lib/realtime";
-import cors from "@elysiajs/cors";
 const ROOM_TTL_SECONDS = 60 * 10;
-
-const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(",")
-  : ["http://localhost:3000"];
 
 //api routes for room creation, ttl checking and room deletion
 const rooms = new Elysia({ prefix: "/room" })
@@ -44,6 +39,8 @@ const rooms = new Elysia({ prefix: "/room" })
       await realtime
         .channel(auth.roomId)
         .emit("chat.destroy", { isDestroyed: true });
+
+
 
       await Promise.all([
         await redis.del(`meta:${auth.roomId}`),
@@ -120,17 +117,7 @@ const messages = new Elysia({ prefix: "/messages" })
     { query: z.object({ roomId: z.string() }) }
   );
 
-const app = new Elysia({ prefix: "/api" })
-  .use(
-    cors({
-      origin: ALLOWED_ORIGINS,
-      methods: ["GET", "POST", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
-      credentials: true,
-    })
-  )
-  .use(rooms)
-  .use(messages);
+const app = new Elysia({ prefix: "/api" }).use(rooms).use(messages);
 
 export const GET = app.fetch;
 export const POST = app.fetch;
