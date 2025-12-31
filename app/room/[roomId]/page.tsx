@@ -25,7 +25,7 @@ export default function RoomPage() {
   });
 
   useEffect(() => {
-    if (ttlData?.ttl !== undefined) setTimeRemaining(ttlData.ttl);
+    if (ttlData?.ttl !== undefined) setTimeRemaining(ttlData.ttl)
   }, [ttlData]);
 
   useEffect(() => {
