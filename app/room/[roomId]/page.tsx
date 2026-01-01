@@ -33,7 +33,7 @@ export default function RoomPage() {
   useEffect(() => {
     if (timeRemaining === null || timeRemaining < 0) return;
     if (timeRemaining === 0) {
-      router.push("/?destroyed=true");
+      router.push("/?destroyed=true")
       return;
     }
 
@@ -102,7 +102,7 @@ export default function RoomPage() {
         refetch();
       }
       if (event === "chat.destroy") {
-        router.push("/?destroyed=true");
+        router.push("/?destroyed=true")
       }
     },
   });

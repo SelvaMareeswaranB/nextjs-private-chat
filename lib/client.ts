@@ -1,5 +1,5 @@
 import { treaty } from '@elysiajs/eden';
-import type { App } from '../app/api/[[...slugs]]/route';
+import type { App } from '../app/api/[[...slugs]]/route'
 
 const url = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -9,5 +9,4 @@ if (!url) {
   );
 }
 
-// create Treaty client
 export const client = treaty<App>(url).api;
