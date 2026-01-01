@@ -8,6 +8,8 @@ import { format } from "date-fns";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+
+console.log("asasa",client)
 export default function RoomPage() {
   const params = useParams();
   const roomId = params.roomId as string;
