@@ -9,7 +9,7 @@ import { Suspense } from "react";
 
 const Page = ()=>{
   return <Suspense>
-      <Lobby />;
+      <Lobby />
   </Suspense>
 
 }
