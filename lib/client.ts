@@ -1,7 +1,6 @@
 import { treaty } from '@elysiajs/eden';
 import type { App } from '../app/api/[[...slugs]]/route';
 
-// pick the right URL
 const url = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 if (!url) {
